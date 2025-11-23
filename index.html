@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="tailwind.js"></script> -->
+</head>
+
+<body class="bg-gradient-to-br from-orange-200 to-yellow-100 min-h-screen flex flex-col items-center">
+
+    <!-- Navbar -->
+    <nav class="w-full h-16 flex items-center px-6 bg-white/50 backdrop-blur-lg shadow-md">
+        <h1 class="text-3xl font-bold text-orange-700">Tic Tac Toe</h1>
+    </nav>
+
+    <!-- Game Container -->
+    <div class="mt-10 flex flex-col items-center game_container">
+
+        <h2 id="heading" class="text-3xl md:text-4xl font-bold text-orange-900 tracking-wide mb-6 drop-shadow-sm">
+            Turn For "X"
+        </h2>
+
+        <!-- Game Grid -->
+        <div id="board" class="grid grid-cols-3 gap-4 bg-white/40 p-4 rounded-2xl shadow-2xl backdrop-blur-lg">
+
+            <!-- 9 Cells with inner span -->
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+            <div
+                class="cells w-24 h-24 bg-white rounded-xl shadow-md flex items-center justify-center text-4xl font-bold text-orange-700 cursor-pointer hover:bg-orange-100 transition">
+                <span class="icells"></span></div>
+
+        </div>
+
+        <!-- Play Again Button -->
+        <button id="resetBtn"
+            class="mt-8 px-6 py-2 bg-orange-600 text-white text-lg rounded-lg shadow-lg hover:bg-orange-700 transition">
+            Play Again
+        </button>
+
+    </div>
+
+    <script>
+        let turn = "X";
+        let gameOver = false;
+
+        const heading = document.getElementById("heading");
+        const cells = Array.from(document.getElementsByClassName("cells"));
+        const icells = Array.from(document.getElementsByClassName("icells"));
+        const resetBtn = document.getElementById("resetBtn");
+
+        // Change Turn
+        function changeTurn() {
+            turn = turn === "X" ? "O" : "X";
+            heading.textContent = `Turn For "${turn}"`;
+        }
+
+        // Check Win Function
+        function checkWin() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+
+                if (
+                    icells[a].textContent &&
+                    icells[a].textContent === icells[b].textContent &&
+                    icells[b].textContent === icells[c].textContent
+                ) {
+                    heading.textContent = `"${icells[a].textContent}" Wins The Match!`;
+
+                    // Highlight Winning Cells
+                    [a, b, c].forEach(i => {
+                        cells[i].style.backgroundColor = "#44f15e";
+                        icells[i].style.color = "white";
+                    });
+
+                    gameOver = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Check Draw
+        function checkDraw() {
+            if (gameOver) return;
+
+            const filled = icells.every(cell => cell.textContent !== "");
+            if (filled) {
+                heading.textContent = "It's a Draw!";
+                gameOver = true;
+            }
+        }
+
+        // Restart Game
+        function restartGame() {
+            turn = "X";
+            heading.textContent = 'Turn For "X"';
+            gameOver = false;
+
+            icells.forEach(cell => {
+                cell.textContent = "";
+                cell.style.color = "rgb(171, 63, 63)";
+            });
+
+            cells.forEach(cell => {
+                cell.style.backgroundColor = "white";
+            });
+        }
+
+        resetBtn.addEventListener("click", restartGame);
+
+        // Cell Click Events
+        cells.forEach((box, index) => {
+            box.addEventListener("click", () => {
+                let cell = icells[index];
+
+                if (cell.textContent !== "" || gameOver) return;
+
+                cell.textContent = turn;
+
+                if (!checkWin()) {
+                    changeTurn();
+                    checkDraw();
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
